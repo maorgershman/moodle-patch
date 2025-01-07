@@ -1,6 +1,13 @@
 const fetchActualUrl = async (href) => {
-  const res = await fetch(href);
-  let html = await res.text();
+  let res = null;
+  let html = null;
+
+  try {
+    res = await fetch(href);
+    html = await res.text();
+  } catch (e) {
+    return null;
+  }
 
   // Search resource div
   let delim = `workaround">`;
@@ -30,45 +37,51 @@ const fetchActualUrl = async (href) => {
   delim = '"';
   index = html.indexOf(delim);
   html = html.substring(0, index);
-  
+
   return html;
 };
 
-const lazy = false;
+let lazy = false;
 
 window.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("a").forEach(async (a) => {
-    if (a.hasAttribute("target") || !a.hasAttribute("onclick")) {
-      return;
+  chrome.storage.sync.get("options", (data) => {
+    if (!!data && "options" in data && "lazyPDFLoading" in data.options) {
+      lazy = Boolean(data.options.lazyPDFLoading);
     }
 
-    a.setAttribute("target", "_blank");
-    a.removeAttribute("onclick");
+    document.querySelectorAll("a").forEach(async (a) => {
+      if (a.hasAttribute("target") || !a.hasAttribute("onclick")) {
+        return;
+      }
 
-    const clone = a.cloneNode(true);
-    if (a.classList.contains("aalink")) {
-      if (lazy) {
-        const eventListener = async (event) => {
-          event.preventDefault();
+      a.setAttribute("target", "_blank");
+      a.removeAttribute("onclick");
 
-          let url = await fetchActualUrl(a.href);
-          if (url == null) {
-            clone.removeEventListener("click", eventListener);
-            url = a.href;
+      const clone = a.cloneNode(true);
+      if (a.classList.contains("aalink")) {
+        if (lazy) {
+          const eventListener = async (event) => {
+            event.preventDefault();
+
+            let url = await fetchActualUrl(a.href);
+            if (url == null) {
+              clone.removeEventListener("click", eventListener);
+              url = a.href;
+            }
+
+            window.open(url, "_blank");
+          };
+
+          clone.addEventListener("click", eventListener);
+        } else {
+          const url = await fetchActualUrl(a.href);
+          if (url != null) {
+            clone.setAttribute("href", url);
           }
-
-          window.open(url, "_blank");
-        };
-
-        clone.addEventListener("click", eventListener);
-      } else {
-        const url = await fetchActualUrl(a.href);
-        if (url != null) {
-          clone.setAttribute("href", url);
         }
       }
-    }
 
-    a.parentNode.replaceChild(clone, a);
+      a.parentNode.replaceChild(clone, a);
+    });
   });
 });

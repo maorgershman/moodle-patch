@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <!-- Lazy PDF loading -->
+      <span
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        "
+      >
+        <label>Lazy PDF loading</label>
+        <label class="switch">
+          <input id="lazy-pdf-toggler" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+      </span>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
