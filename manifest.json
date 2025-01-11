@@ -3,10 +3,7 @@
   "name": "moodle-patch",
   "version": "1.0",
   "description": "Patches Moodle",
-  "permissions": [
-    "activeTab",
-    "declarativeNetRequest"
-  ],
+  "permissions": ["activeTab", "declarativeNetRequest", "storage"],
   "content_scripts": [
     {
       "matches": ["https://moodle24.technion.ac.il/*"],
@@ -14,11 +11,12 @@
       "run_at": "document_start"
     }
   ],
-  "host_permissions": [
-    "https://moodle24.technion.ac.il/*"
-  ],
+  "host_permissions": ["https://moodle24.technion.ac.il/*"],
   "background": {
     "service_worker": "remove-disposition.js",
     "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
   }
 }
