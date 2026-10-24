@@ -6,12 +6,12 @@
   "permissions": ["activeTab", "declarativeNetRequest", "storage"],
   "content_scripts": [
     {
-      "matches": ["https://moodle24.technion.ac.il/*"],
+      "matches": ["https://moodle26.technion.ac.il/*"],
       "js": ["patch-links.js"],
       "run_at": "document_start"
     }
   ],
-  "host_permissions": ["https://moodle24.technion.ac.il/*"],
+  "host_permissions": ["https://moodle26.technion.ac.il/*"],
   "background": {
     "service_worker": "remove-disposition.js",
     "type": "module"
